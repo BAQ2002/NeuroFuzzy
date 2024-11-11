@@ -60,11 +60,11 @@ class TreinamentoFuzzy:
         return probabilidade, ativacoes_p_entrada
 
     # Função de treinamento usando backpropagation
-    def train(self, X, y, epochs=500, save_weights_path="weights.npy"):
+    def train(self, entradas, y, epochs=500, save_weights_path="weights.npy"):
         # Loop de treinamento por número de épocas
         for epoch in range(epochs):
             # Passo forward: calcula a saída e as forças de ativação
-            probabilidade, ativacoes_p_entrada = self.forward(X)
+            probabilidade, ativacoes_p_entrada = self.forward(entradas)
 
             # Calcula o erro usando a função de custo logarítmica (log-loss)
             erro = y - probabilidade
@@ -76,9 +76,9 @@ class TreinamentoFuzzy:
             for i in range(self.n_rules):
                 for j in range(self.n_inputs):
                     # Gradiente para a média (mean) de cada função de pertinência
-                    grad_mean = np.sum(erro * ativacoes_p_entrada[:, i] * (X[:, j] - self.input_means[i, j]) / (self.input_stds[i, j] ** 2))
+                    grad_mean = np.sum(erro * ativacoes_p_entrada[:, i] * (entradas[:, j] - self.input_means[i, j]) / (self.input_stds[i, j] ** 2))
                     # Gradiente para o desvio padrão (sigma) de cada função de pertinência
-                    grad_sigma = np.sum(erro * ativacoes_p_entrada[:, i] * ((X[:, j] - self.input_means[i, j]) ** 2) / (self.input_stds[i, j] ** 3))
+                    grad_sigma = np.sum(erro * ativacoes_p_entrada[:, i] * ((entradas[:, j] - self.input_means[i, j]) ** 2) / (self.input_stds[i, j] ** 3))
 
                     # Atualiza as médias e os desvios padrão com base nos gradientes
                     self.input_means[i, j] += self.learning_rate * grad_mean
